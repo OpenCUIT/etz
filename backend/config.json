@@ -1,0 +1,39 @@
+{
+    "days": 90,
+    "intervalMinutes": 30,
+    "outputPath": "news.json",
+    "sources": [
+      {
+        "url": "http://jwc.cuit.edu.cn/tzgg/jxyx.htm",
+        "title": "教学运行",
+        "dateSelector": "h6",
+        "itemSelector": "div.title",
+        "titleSelector": "h5 a",
+        "hrefSelector": "h5 a"
+      },
+      {
+        "url": "http://jwc.cuit.edu.cn/tzgg.htm",
+        "title": "通知公告",
+        "dateSelector": "h6",
+        "itemSelector": "div.title",
+        "titleSelector": "h5 a",
+        "hrefSelector": "h5 a"
+      },
+      {
+        "url": "http://www.cuit.edu.cn/index/tzgg.htm",
+        "title": "新闻中心通知公告",
+        "dateSelector": "span",
+        "itemSelector": "ul.list li[data-aos=\"fade-up\"]",
+        "titleSelector": "a",
+        "hrefSelector": "a"
+      },
+      {
+        "url": "http://xsgzc.cuit.edu.cn/index/gsl.htm",
+        "title": "学生处-公示栏",
+        "dateSelector": "span.date",
+        "itemSelector": "ul.nav-left li.list",
+        "titleSelector": "a.list_data",
+        "hrefSelector": "a.list_data"
+      }
+    ]
+  }
