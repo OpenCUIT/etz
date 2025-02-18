@@ -1,7 +1,6 @@
 {
     "days": 90,
-    "intervalMinutes": 30,
-    "outputPath": "news.json",
+
     "sources": [
       {
         "url": "http://jwc.cuit.edu.cn/tzgg/jxyx.htm",
@@ -25,7 +24,10 @@
         "dateSelector": "span",
         "itemSelector": "ul.list li[data-aos=\"fade-up\"]",
         "titleSelector": "a",
-        "hrefSelector": "a"
+        "hrefSelector": "a",
+        "HEADERS": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"        }
       },
       {
         "url": "http://xsgzc.cuit.edu.cn/index/gsl.htm",

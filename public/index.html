@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成信易通知</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="assets/header-logo.svg" alt="成信易通知" class="header-logo">
+            </div>
+            <div class="update-info">
+                更新时间：<span id="update-time"></span>
+                <button id="refresh" class="refresh-btn" title="刷新">↻</button>
+            </div>
+        </div>
+        <div class="filters">
+            <div class="filter-group">
+                <select id="category" class="filter-select">
+                    <option value="all">全部栏目</option>
+                </select>
+                <select id="days" class="filter-select">
+                    <option value="3">最近3天</option>
+                    <option value="7">最近7天</option>
+                    <option value="14">最近14天</option>
+                    <option value="30">最近30天</option>
+                    <option value="90">最近90天</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="loading" class="loading">加载中...</div>
+        <div id="error" class="error"></div>
+        <div id="news-container">
+            <ul id="news-list"></ul>
+            <div class="pagination">
+                <button id="prev-page" class="page-btn">上一页</button>
+                <span id="page-info">第 <span id="current-page">1</span> / <span id="total-pages">1</span> 页</span>
+                <button id="next-page" class="page-btn">下一页</button>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>
