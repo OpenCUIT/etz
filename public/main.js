@@ -129,55 +129,61 @@ class NewsApp {
     }
 
     async fetchWithTimeout(url, options = {}, retries = 3) {
-        const timeout = 10000;
+        const timeout = 5000;
         let lastError;
 
         for (let i = 0; i < retries; i++) {
             try {
                 const controller = new AbortController();
-                const id = setTimeout(() => controller.abort(), timeout);
-                
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                }, timeout);
+
                 const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
                 console.log(`尝试请求 (${i + 1}/${retries}):`, fullUrl);
-                
+
                 const response = await fetch(fullUrl, {
                     ...options,
                     signal: controller.signal,
                     headers: {
                         'Cache-Control': 'no-cache',
+                        'Accept': 'application/json',
                         ...options.headers
                     }
                 });
-                
-                clearTimeout(id);
-                
+
+                clearTimeout(timeoutId);
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
-                return response;
+
+                const data = await response.json();
+                return data;
+
             } catch (error) {
                 console.error(`请求失败 (尝试 ${i + 1}/${retries}):`, error);
                 lastError = error;
-                
-                // 如果不是最后一次尝试，则等待后重试
+
+                if (error.name === 'AbortError') {
+                    console.log('请求超时，准备重试...');
+                }
+
                 if (i < retries - 1) {
-                    const waitTime = Math.min(1000 * Math.pow(2, i), 5000); // 指数退避，最多等待5秒
+                    const waitTime = Math.min(1000 * Math.pow(1.5, i), 3000);
                     console.log(`等待 ${waitTime}ms 后重试...`);
                     await new Promise(resolve => setTimeout(resolve, waitTime));
                 }
             }
         }
-        
-        // 所有重试都失败后抛出最后一个错误
-        throw lastError;
+
+        throw new Error(`请求失败，已重试 ${retries} 次: ${lastError.message}`);
     }
 
     async loadCategories() {
         try {
             console.log('开始加载分类');
-            const response = await this.fetchWithTimeout('/api/news/categories', {}, 3);
-            const categories = await response.json();
+            const categories = await this.fetchWithTimeout('/api/news/categories', {}, 3);
             console.log('获取到的分类:', categories);
 
             // 清除现有选项（除了"全部栏目"）
@@ -197,26 +203,23 @@ class NewsApp {
         } catch (error) {
             console.error('加载分类失败:', error);
             this.showError(`加载栏目失败: ${error.message}`);
-            throw error; // 重新抛出错误以便上层处理
+            throw error;
         }
     }
 
     async refresh(retryCount = 3) {
         this.showLoading();
         try {
-            const response = await this.fetchWithTimeout('/api/news/refresh', {}, retryCount);
-            const data = await response.json();
-            
-            // 检查是否有抓取失败的分类
+            const data = await this.fetchWithTimeout('/api/news/refresh', {}, retryCount);
+
             if (data.errors && data.errors.length > 0) {
                 const errorSources = data.errors.map(e => e.source).join(', ');
                 const message = data.partialSuccess
                     ? `部分栏目（${errorSources}）抓取失败，其他栏目已更新`
                     : `所有栏目抓取失败（${errorSources}），请稍后重试`;
-                
+
                 this.showToast(message, 5000);
-                
-                // 如果完全失败，显示错误信息
+
                 if (!data.partialSuccess) {
                     this.showError(message);
                     return;
@@ -235,8 +238,7 @@ class NewsApp {
             console.error('刷新失败:', error);
             this.showError(`刷新新闻失败: ${error.message}`);
             this.hideLoading();
-            
-            // 添加重试按钮
+
             const retryButton = document.createElement('button');
             retryButton.textContent = '重试';
             retryButton.className = 'retry-btn';
